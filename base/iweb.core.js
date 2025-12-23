@@ -773,19 +773,13 @@ class iwebApp {
         const rtable = document.querySelectorAll('table.iweb-rtable');
         if(rtable.length > 0) {
             rtable.forEach(function(table) {
-                const headerTxts = Array.from(table.querySelectorAll('thead th'), th => th.textContent.trim());
-                if(headerTxts.length > 0) {
-                    table.querySelectorAll('th, td').forEach(cell => {
-                        const wrapper = document.createElement('div');
-                        while (cell.firstChild) {
-                          wrapper.appendChild(cell.firstChild);
-                        }
-                        cell.appendChild(wrapper);
-                    });
-                }
-                else {
-                    table.classList.remove('iweb-rtable');
-                }
+                table.querySelectorAll('th, td').forEach(cell => {
+                    const wrapper = document.createElement('div');
+                    while (cell.firstChild) {
+                      wrapper.appendChild(cell.firstChild);
+                    }
+                    cell.appendChild(wrapper);
+                });
             });
         }
         
@@ -1492,18 +1486,30 @@ class iwebApp {
             rtable.forEach(function(table) {
                 const switch_width = (table.dataset.rw || 720);
                 const headerTxts = Array.from(table.querySelectorAll('thead th'), th => th.textContent.trim());
-                if(headerTxts.length > 0 && switch_width >= thisInstance.viewerWidth) {
-                    const headerBackground = window.getComputedStyle(table.querySelector('thead tr')).backgroundColor;
-                    const headerBackgrounds = Array.from(table.querySelectorAll('thead th'), th => window.getComputedStyle(th).backgroundColor);
-            
-                    table.classList.add('responsive');
+                if(switch_width >= thisInstance.viewerWidth) {
+                    let headerBackground = [];
+                    let headerBackgrounds = [];
+                    if(headerTxts.length > 0 ) {
+                        headerBackground = window.getComputedStyle(table.querySelector('thead tr')).backgroundColor;
+                        headerBackgrounds = Array.from(table.querySelectorAll('thead th'), th => window.getComputedStyle(th).backgroundColor);
+                        table.classList.add('responsive');
+                    }
+                    else {
+                        table.classList.add('responsive');
+                        table.classList.add('non-head');
+                    }
                     table.querySelectorAll('tbody tr').forEach(function (tr) {
                         tr.querySelectorAll('td').forEach(function(td, index) {
                             if(!thisInstance.isValue(td.querySelector('div.vlabel'))) {
-                                const setBackground = thisInstance.isMatch((headerBackgrounds[index] || 'rgba(0, 0, 0, 0)'), 'rgba(0, 0, 0, 0)')?headerBackground:(headerBackgrounds[index] || 'rgba(0, 0, 0, 0)');
+                                let setBackground = 'rgba(0, 0, 0, 0)';
+                                if(headerTxts.length > 0 ) {
+                                    setBackground = thisInstance.isMatch((headerBackgrounds[index] || 'rgba(0, 0, 0, 0)'), 'rgba(0, 0, 0, 0)')?headerBackground:(headerBackgrounds[index] || 'rgba(0, 0, 0, 0)');
+                                }
                                 const wrapper = document.createElement('div');
                                 wrapper.classList.add('vlabel');
-                                wrapper.textContent = (headerTxts[index] || '');
+                                if(headerTxts.length > 0 ) {
+                                    wrapper.textContent = (headerTxts[index] || '');
+                                }
                                 if(!thisInstance.isMatch(setBackground, 'rgba(0, 0, 0, 0)')) {
                                     wrapper.style.background = setBackground;
                                     const rgb = setBackground.match(/\d+/g).map(Number); // [r, g, b, (a)]
@@ -1517,10 +1523,10 @@ class iwebApp {
                             }
                         });
                     });
-                    
                 }
                 else {
                     table.classList.remove('responsive');
+                    table.classList.remove('non-head');
                     table.querySelectorAll('tbody td').forEach(function(td) {
                         if(thisInstance.isValue(td.querySelector('div.vlabel'))) {
                             td.querySelector('div.vlabel').remove();
