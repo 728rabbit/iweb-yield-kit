@@ -87,6 +87,30 @@ class iwebApp {
             }
         };
         
+        const setViewMode = (width) => {
+            const BREAKPOINTS = {
+                DESKTOP: 900,
+                TABLET: 600
+            };
+
+            const MODES = ['desktop', 'tablet', 'mobile'];
+            const viewer = document.querySelector('div.iweb-viewer');
+            if(viewer) {
+                MODES.forEach(mode => viewer.classList.remove(mode));
+
+                let modeClass;
+                if (width >= BREAKPOINTS.DESKTOP) {
+                    modeClass = 'desktop';
+                } else if (width >= BREAKPOINTS.TABLET) {
+                    modeClass = 'tablet';
+                } else {
+                    modeClass = 'mobile';
+                }
+
+                viewer.classList.add(modeClass);
+            }
+        };
+        
         // Call optional layout and extra functions if they are defined
         document.addEventListener('DOMContentLoaded', function() {
             // Set current language
@@ -118,9 +142,9 @@ class iwebApp {
 
             // Call function
             setTimeout(function() {
-                //console.log('DOM done');
-                document.body.style.setProperty('--iscrollbar-width', (window.innerWidth - thisInstance.viewerWidth) + 'px');
+                setViewMode(thisInstance.viewerWidth);
                 
+                //console.log('DOM done');
                 thisInstance.responsive();
                 thisInstance.responsiveTable();
                 
@@ -162,6 +186,8 @@ class iwebApp {
                 if (thisInstance.viewerWidth !== parseInt(document.querySelector('div.iweb-viewer').offsetWidth)) {
                     thisInstance.viewerWidth = parseInt(document.querySelector('div.iweb-viewer').offsetWidth);
 
+                    setViewMode(thisInstance.viewerWidth);
+                    
                     thisInstance.responsive();
                     thisInstance.responsiveTable();
                     
@@ -1484,7 +1510,7 @@ class iwebApp {
         const rtable = document.querySelectorAll('table.iweb-table');
         if(rtable.length > 0) {
             rtable.forEach(function(table) {
-                const switch_width = (table.dataset.rw || 720);
+                const switch_width = (table.dataset.rw || 600);
                 const headerTxts = Array.from(table.querySelectorAll('thead th'), th => th.textContent.trim());
                 if(switch_width >= thisInstance.viewerWidth) {
                     let headerBackground = [];
