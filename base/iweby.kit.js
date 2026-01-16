@@ -1431,13 +1431,15 @@ class iwebyKit {
                 fullscreenBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#ffffff"><path d="M21 9V8C21 5.79086 18.9853 4 16.5 4H15.25M21 15V16C21 18.2091 18.9853 20 16.5 20H15.25M3 15V16C3 18.2091 5.01472 20 7.5 20H8.75M3 9V8C3 5.79086 5.01472 4 7.5 4H8.75" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
                 fullscreenBtn.addEventListener('click', function(e) {
                     const target = e.target;
-                    if (target.closest('div.iweb-video').classList.contains('fullscreen')) {
-                        target.closest('div.iweb-video').classList.remove('fullscreen');
-                        document.body.classList.remove('iweb-disable-scroll');
-                    }
-                    else {
-                        target.closest('div.iweb-video').classList.add('fullscreen');
-                        document.body.classList.add('iweb-disable-scroll');
+                    const target_video = target.closest('div.iweb-video').querySelector('video'); 
+                    if (target_video.requestFullscreen) {
+                        target_video.requestFullscreen();
+                    } else if (target_video.mozRequestFullScreen) {
+                        target_video.mozRequestFullScreen();
+                    } else if (target_video.webkitRequestFullscreen) {
+                        target_video.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+                    } else if (target_video.msRequestFullscreen) {
+                        target_video.msRequestFullscreen();
                     }
                     target.closest('div.iweb-video').querySelector('div.volume').classList.remove('show');
                 });
