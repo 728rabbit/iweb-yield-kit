@@ -143,7 +143,11 @@ table.iweb-table td > div {
 table.iweb-table.responsive tr {
     display: block;
     width: 100%;
-    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+table.iweb-table.responsive tr:nth-child(1) {
+    margin-top: 0px;
 }
 
 table.iweb-table.responsive th,
