@@ -223,15 +223,20 @@ class iwebyKit {
         document.body.classList.add('iweb');
 
         // Wrap elements except for <script>, <noscript>, and <style>
-        const elementsToWrap = Array.from(document.body.children).filter(function(e) {
-            return !['SCRIPT', 'NOSCRIPT', 'STYLE'].includes(e.tagName.toUpperCase());
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('iweb-viewer');
+        const bodyChildren = Array.from(document.body.childNodes);
+        bodyChildren.forEach(function(node) {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+                if (!['SCRIPT', 'NOSCRIPT', 'STYLE'].includes(node.tagName.toUpperCase())) {
+                    wrapper.appendChild(node);
+                }
+            }
+            else if (node.nodeType === Node.COMMENT_NODE) {
+                wrapper.appendChild(node);
+            }
         });
-        if (elementsToWrap.length > 0) {
-            const wrapper = document.createElement('div');
-            wrapper.classList.add('iweb-viewer');
-            elementsToWrap.forEach(function(e) {
-                wrapper.appendChild(e);
-            });
+        if (wrapper.childNodes.length > 0) {
             document.body.prepend(wrapper);
         }
 
